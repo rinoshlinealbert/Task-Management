@@ -1,0 +1,164 @@
+import java.util.Scanner;
+
+public class inventory{
+
+    // Inventory data
+    private static String[] itemNames = new String[50];
+    private static String[] itemDescriptions = new String[50];
+    private static String[] itemStatus = new String[50];
+    private static int[] itemQuantity = new int[50];
+
+    private static int itemCount = 0;
+    private static Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+
+        printWelcome();
+        boolean running = true;
+
+        while (running) {
+            displayMenu();
+            System.out.print("Enter your choice: ");
+            String choice = scanner.nextLine();
+
+            switch (choice) {
+                case "1":
+                    addItem();
+                    break;
+                case "2":
+                    viewItems();
+                    break;
+                case "3":
+                    searchItems();
+                    break;
+                case "4":
+                    updateItemStatus();
+                    break;
+                case "5":
+                    running = false;
+                    System.out.println("Thank you! Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice! Try again.\n");
+            }
+        }
+        scanner.close();
+    }
+
+    // Welcome
+    private static void printWelcome() {
+        System.out.println("================================");
+        System.out.println(" Inventory Management System");
+        System.out.println("================================\n");
+    }
+
+    // Menu
+    private static void displayMenu() {
+        System.out.println("1. Add Item");
+        System.out.println("2. View Items");
+        System.out.println("3. Search Item");
+        System.out.println("4. Update Item Status");
+        System.out.println("5. Exit");
+    }
+
+    // Add item
+    private static void addItem() {
+        if (itemCount >= 50) {
+            System.out.println("Inventory full!\n");
+            return;
+        }
+
+        System.out.print("Enter Item Name: ");
+        String name = scanner.nextLine();
+
+        System.out.print("Enter Quantity: ");
+        int qty = Integer.parseInt(scanner.nextLine());
+
+        System.out.print("Enter Description (press Enter to skip): ");
+        String desc = scanner.nextLine();
+
+        itemNames[itemCount] = name;
+        itemQuantity[itemCount] = qty;
+        itemDescriptions[itemCount] = desc.isEmpty() ? "No description" : desc;
+        itemStatus[itemCount] = "Available";
+
+        itemCount++;
+        System.out.println("Item added successfully!\n");
+    }
+
+    // View items
+    private static void viewItems() {
+        if (itemCount == 0) {
+            System.out.println("No items available!\n");
+            return;
+        }
+
+        System.out.println("\n--- Inventory List ---");
+        for (int i = 0; i < itemCount; i++) {
+            System.out.println((i + 1) + ". [" + itemStatus[i] + "] "
+                    + itemNames[i] + " | Qty: " + itemQuantity[i]);
+            if (!itemDescriptions[i].equals("No description")) {
+                System.out.println("   Description: " + itemDescriptions[i]);
+            }
+        }
+        System.out.println();
+    }
+
+    // Search item
+    private static void searchItems() {
+        System.out.print("Enter keyword to search: ");
+        String key = scanner.nextLine().toLowerCase();
+        int found = 0;
+
+        for (int i = 0; i < itemCount; i++) {
+            if (itemNames[i].toLowerCase().contains(key)
+                    || itemDescriptions[i].toLowerCase().contains(key)) {
+                System.out.println((i + 1) + ". " + itemNames[i]
+                        + " | Qty: " + itemQuantity[i]);
+                found++;
+            }
+        }
+
+        if (found == 0) {
+            System.out.println("Item not found!\n");
+        } else {
+            System.out.println("Found " + found + " item(s)\n");
+        }
+    }
+
+    // Update status
+    private static void updateItemStatus() {
+        viewItems();
+        if (itemCount == 0) return;
+
+        System.out.print("Enter item number: ");
+        int num = Integer.parseInt(scanner.nextLine());
+
+        if (num < 1 || num > itemCount) {
+            System.out.println("Invalid number!\n");
+            return;
+        }
+
+        System.out.println("1. Available");
+        System.out.println("2. Low Stock");
+        System.out.println("3. Out of Stock");
+        System.out.print("Choose status: ");
+        String s = scanner.nextLine();
+
+        switch (s) {
+            case "1":
+                itemStatus[num - 1] = "Available";
+                break;
+            case "2":
+                itemStatus[num - 1] = "Low Stock";
+                break;
+            case "3":
+                itemStatus[num - 1] = "Out of Stock";
+                break;
+            default:
+                System.out.println("Wrong choice!");
+                return;
+        }
+        System.out.println("Status updated!\n");
+    }
+}
